@@ -25,9 +25,17 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with: 
-         accept-android-sdk-licenses: true
-      
+
+      - name: Accept Android SDK licenses
+        shell: bash
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | sort -V | tail -n 1)
+          if [ -z "$SDKMANAGER" ]; then
+            echo "Android SDK manager not found"
+            exit 1
+          fi
+          yes | "$SDKMANAGER" --licenses
+
       - name: Install dependencies
         run: npm ci
 
