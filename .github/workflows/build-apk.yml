@@ -63,6 +63,28 @@ jobs:
       - name: Create Android project
         run: npx cap add android
 
+      - name: Add camera and microphone permissions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          manifest = Path("android/app/src/main/AndroidManifest.xml")
+
+          text = manifest.read_text()
+
+          permissions = """    <uses-permission android:name="android.permission.CAMERA" />
+              <uses-permission android:name="android.permission.RECORD_AUDIO" />
+          """
+
+          text = text.replace(
+              '<application',
+              permissions + '\n    <application',
+              1
+          )
+
+          manifest.write_text(text)
+          PY
+
       - name: Sync Capacitor
         run: npx cap sync android
 
